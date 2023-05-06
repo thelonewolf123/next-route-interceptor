@@ -69,8 +69,6 @@ The `onstart` event is triggered when a route change starts, while the `onend` e
 
 Here's an example of how you can track route changes using Next.js Router Events:
 
-javascriptCopy code
-
 ```js
 import { useEffect } from 'react'
 import { useRouteInterceptor, RouterEventHandlerType } from 'next-router-events'
