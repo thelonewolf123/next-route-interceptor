@@ -1,6 +1,6 @@
 {
   "name": "next-route-interceptor",
-  "version": "0.0.1",
+  "version": "0.0.1a",
   "main": "index.js",
   "license": "MIT",
   "scripts": {
