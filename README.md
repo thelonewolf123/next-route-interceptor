@@ -6,15 +6,11 @@ Next.js Router Events is a lightweight library that provides router event handli
 
 You can install the Next.js Router Events library using npm or yarn:
 
-shellCopy code
-
 ```bash
 npm install next-router-events
 ```
 
 or
-
-shellCopy code
 
 ```bash
 yarn add next-router-events
@@ -26,8 +22,6 @@ To use the Next.js Router Events library, follow the steps below:
 
 1. Import the necessary functions and types from the library:
 
-javascriptCopy code
-
 ```js
 import { useRouteInterceptor } from 'next-router-events'
 import { useRouter } from 'next/router'
@@ -35,23 +29,17 @@ import { useRouter } from 'next/router'
 
 2. Obtain the Next.js router instance using the `useRouter` hook:
 
-javascriptCopy code
-
 ```js
 const router = useRouter()
 ```
 
 3. Wrap your Next.js router with the `useRouteInterceptor` hook to enable router event handling:
 
-javascriptCopy code
-
 ```js
 const [routedRouter, eventHandlers] = useRouteInterceptor(router)
 ```
 
 4. Access the modified router instance (`routedRouter`) and the event handlers (`eventHandlers`) returned by the `useRouteInterceptor` hook. You can use the `routedRouter` for navigation and rely on the `eventHandlers` to attach event listeners:
-
-javascriptCopy code
 
 ```js
 // Example usage of eventHandlers.on
