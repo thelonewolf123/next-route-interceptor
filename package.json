@@ -3,6 +3,22 @@
   "version": "0.0.1b",
   "main": "index.js",
   "license": "MIT",
+  "author": {
+    "name": "Harish Kumar K",
+    "url": "https://github.com/thelonewolf123"
+  },
+  "repository": {
+    "url": "https://github.com/thelonewolf123/next-route-interceptor"
+  },
+  "keywords": [
+    "nextjs",
+    "nextjs13",
+    "nextjs-router-interceptor",
+    "router-events",
+    "nextjs-router-events",
+    "next13-router-events",
+    "next-route-interceptor"
+  ],
   "scripts": {
     "build": "webpack"
   },
