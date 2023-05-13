@@ -39,7 +39,7 @@ const [router, routeInterceptor] = useRouteInterceptor()
 routeInterceptor.on('onstart', () => {
     // Code to execute when a route change starts
 }) // Example usage of routeInterceptor.off
-routeInterceptor.off('onend', () => {
+routeInterceptor.on('onend', () => {
     // Code to execute when a route change ends
 })
 ```
