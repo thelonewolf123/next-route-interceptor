@@ -2,11 +2,11 @@ import { usePathname, useRouter, useSearchParams } from 'next/navigation'
 import { useEffect, useMemo, useState } from 'react'
 import { AppRouterType, RouterEventHandlerType, RouterKeys } from './types'
 import { useNavigationEvent } from './utils'
-import EventEmitter from 'event-emitter'
+import EventEmitter from 'event-emitter-es6'
 
 export function useRouteInterceptor(): [AppRouterType, RouterEventHandlerType] {
     const router = useRouter()
-    const [onRouteChangeStartFns] = useState(EventEmitter())
+    const [onRouteChangeStartFns] = useState(new EventEmitter())
 
     const pathname = usePathname()
     const searchParams = useSearchParams()
