@@ -1,27 +1,13 @@
-import { enableMapSet, produce } from 'immer'
-import { usePathname, useSearchParams } from 'next/navigation'
-import { useCallback, useEffect, useMemo, useState } from 'react'
-import {
-    AppRouterType,
-    OnRouteChangeEndFnType,
-    OnRouteChangeStartFnType,
-    RouterEventHandlerType,
-    RouterKeys
-} from './types'
+import { usePathname, useRouter, useSearchParams } from 'next/navigation'
+import { useEffect, useMemo, useState } from 'react'
+import { AppRouterType, RouterEventHandlerType, RouterKeys } from './types'
 import { useNavigationEvent } from './utils'
+import EventEmitter from 'event-emitter'
 
-enableMapSet()
+export function useRouteInterceptor(): [AppRouterType, RouterEventHandlerType] {
+    const router = useRouter()
+    const [onRouteChangeStartFns] = useState(EventEmitter())
 
-export function useRouteInterceptor(
-    router: AppRouterType
-): [AppRouterType, RouterEventHandlerType] {
-    const [onRouteChangeStartFns, setOnRouteChangeStartFns] = useState<
-        Set<OnRouteChangeStartFnType>
-    >(new Set())
-
-    const [onRouteChangeEndFns, setOnRouteChangeEndFns] = useState<
-        Set<OnRouteChangeEndFnType>
-    >(new Set())
     const pathname = usePathname()
     const searchParams = useSearchParams()
 
@@ -39,7 +25,7 @@ export function useRouteInterceptor(
                         'replace'
                     ]
                     if (routeChangeEvents.includes(prop)) {
-                        onRouteChangeStartFns.forEach((z) => z())
+                        onRouteChangeStartFns.emit('onstart')
                     }
 
                     return target[prop]
@@ -49,9 +35,9 @@ export function useRouteInterceptor(
     )
 
     const currentUrl = useMemo(() => {
-        if (!searchParams) return null
+        if (!searchParams || typeof window === 'undefined') return null
         return `${window.location.origin}${pathname}${searchParams.toString()}`
-    }, [])
+    }, [pathname, searchParams])
 
     useEffect(() => {
         const handleClick: HTMLAnchorElement['onclick'] = (event) => {
@@ -59,7 +45,7 @@ export function useRouteInterceptor(
             const element = event.target as HTMLAnchorElement
             if (currentUrl === element.href) return
 
-            onRouteChangeStartFns.forEach((z) => z())
+            onRouteChangeStartFns.emit('onstart')
         }
 
         // Select all <a> tags
@@ -76,67 +62,18 @@ export function useRouteInterceptor(
                 anchorTag.removeEventListener('click', handleClick)
             })
         }
-    }, [onRouteChangeStartFns, pathname, routerUrlChangeEvent, searchParams])
-
-    const routeChangeEvents = useMemo(() => {
-        return {
-            on: (
-                event: 'onstart' | 'onend',
-                fn: OnRouteChangeEndFnType | OnRouteChangeStartFnType
-            ) => {
-                console.log('hello, world')
-                if (event === 'onstart') {
-                    setOnRouteChangeStartFns(
-                        produce((state) => {
-                            state.add(fn)
-                        })
-                    )
-                } else if (event === 'onend') {
-                    setOnRouteChangeEndFns(
-                        produce((state) => {
-                            state.add(fn)
-                        })
-                    )
-                }
-            },
-            off: (
-                event: 'onstart' | 'onend',
-                fn: OnRouteChangeEndFnType | OnRouteChangeStartFnType
-            ) => {
-                console.log('good bye world')
-                if (event === 'onstart') {
-                    setOnRouteChangeStartFns(
-                        produce((state) => {
-                            state.delete(fn)
-                        })
-                    )
-                } else if (event === 'onend') {
-                    setOnRouteChangeEndFns(
-                        produce((state) => {
-                            state.delete(fn)
-                        })
-                    )
-                }
-            }
-        }
-    }, [])
+    }, [currentUrl, onRouteChangeStartFns, pathname, searchParams])
 
     useEffect(() => {
         if (routerUrlChangeEvent === currentUrl) return
+        onRouteChangeStartFns.emit('onend')
+    }, [
+        pathname,
+        routerUrlChangeEvent,
+        searchParams,
+        onRouteChangeStartFns,
+        currentUrl
+    ])
 
-        onRouteChangeEndFns.forEach((z) => z())
-
-        return () => {
-            onRouteChangeEndFns.forEach((z) => z())
-        }
-    }, [onRouteChangeEndFns, pathname, routerUrlChangeEvent, searchParams])
-
-    useEffect(() => {
-        return () => {
-            setOnRouteChangeStartFns(new Set())
-            setOnRouteChangeEndFns(new Set())
-        }
-    }, [])
-
-    return [routerProxy, routeChangeEvents]
+    return [routerProxy, onRouteChangeStartFns]
 }

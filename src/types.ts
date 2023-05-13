@@ -1,10 +1,9 @@
 import { useRouter } from 'next/navigation'
 
-export type OnRouteChangeStartFnType = () => void
-export type OnRouteChangeEndFnType = () => void
+export type OnRouteChangeFnType = () => void
 export type AddRouterEventListerType = (
     event: 'onstart' | 'onend',
-    fn: OnRouteChangeStartFnType
+    fn: OnRouteChangeFnType
 ) => void
 export type RouterEventHandlerType = {
     on: AddRouterEventListerType
